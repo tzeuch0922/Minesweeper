@@ -13,8 +13,11 @@ public class MinesweeperPanel extends JPanel
 	private int[][] board = gm.getBoard();
 	private boolean[][] revealed = gm.getRevealed();
 	private boolean[][] flagged = gm.getFlagged();
-	private String[] messages = gm.getMessages();
-
+	private String winMessage = gm.getWinMessage();
+	private String lossMessage = gm.getLossMessage();
+	private int minesLeft = gm.getMinesLeft();
+	private String difficulty = gm.getDifficulty();
+	
 	public MinesweeperPanel()
 	{
 		repaint();
@@ -22,13 +25,9 @@ public class MinesweeperPanel extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		g.setColor(new Color(0,0,0));
-		setBackground(Color.white);
 		revealed = gm.getRevealed();
 		flagged = gm.getFlagged();
-		System.out.println(gm.getWidth()+", "+gm.getHeight());
-		gm.printBoard();
-		gm.printTF(gm.getRevealed());
+		g.setColor(new Color(0,0,0));
 		int minesLeft = gm.getMinesLeft();
 		for(int i = 0; i<gm.getWidth(); i++)
 		{
@@ -86,16 +85,17 @@ public class MinesweeperPanel extends JPanel
 			}
 		}
 		g.setColor(Color.lightGray);
-		g.fillRect(0,0,900,100);
+		g.fillRect(0,0,(30*gm.getWidth()),100);
 		g.setColor(Color.white);
-		g.fillRect(400,0,100,100);
+		g.fillRect((30*gm.getWidth())/2-50,0,100,100);
 		g.setColor(Color.black);
-		g.drawRect(400,0,100,100);
+		g.drawRect((30*gm.getWidth())/2-50,0,100,100);
 		g.setFont(new Font(Font.SERIF, Font.PLAIN, 12));
-		g.drawString("Mines Left:", 425, 15);
+		g.drawString("Mines Left:", (30*gm.getWidth())/2-25, 15);
 		g.setColor(Color.black);
 		g.setFont(new Font(Font.SERIF, Font.BOLD, 100));
-		g.drawString(""+minesLeft,400, 90);
+		g.drawString(""+minesLeft,(30*gm.getWidth())/2-50, 90);
+		
 	}
 	public void leftClick(int x,int y)
 	{
@@ -174,13 +174,13 @@ public class MinesweeperPanel extends JPanel
 		{
 			for(int j = 0; j<gm.getWidth(); j++)
 			{
-				if(revealed[x][y])
+				if(revealed[i][j])
 				{
 					k++;
 				}
 			}
 		}
-		if(k==gm.getWidth()*gm.getHeight()-gm.getMinesLeft())
+		if(k==gm.getWidth()*gm.getHeight()-gm.getMines())
 		{
 			gameWin();
 		}
@@ -209,22 +209,170 @@ public class MinesweeperPanel extends JPanel
 	}
 	public void gameWin()
 	{
-		int z = (int)(Math.random()*2);
-		JOptionPane.showMessageDialog(null,messages[z]);
+		JOptionPane.showMessageDialog(null,winMessage);
 		System.exit(0);
 	}
 	public void gameLoss()
 	{
-		int z = (int)(Math.random()*3)+2;
-		JOptionPane.showMessageDialog(null,messages[z]);
+		JOptionPane.showMessageDialog(null,lossMessage);
 		System.exit(0);
 	}
-	public int getWidth()
+	public int getWidthVariable()
 	{
 		return gm.getWidth();
 	}
-	public int getHeight()
+	public int getHeightVariable()
 	{
 		return gm.getHeight();
+	}
+	public void save()
+	{
+		String boardPlaces = "";
+		int mines = 0;
+		if(gm.getDifficulty().equals("Beginner"))
+		{
+			mines = 10;
+		}
+		else if(gm.getDifficulty().equals("Intermediate"))
+		{
+			mines = 40;
+		}
+		else if(gm.getDifficulty().equals("Expert"))
+		{
+			mines = 99;
+		}
+		for(int i = 0; i<gm.getHeight(); i++)
+		{
+			for(int j = 0; j<gm.getWidth(); j++)
+			{
+				boardPlaces += board[i][j] + "";
+			}
+		}
+		String revealedPlaces = "";
+		for(int i = 0; i<gm.getHeight(); i++)
+		{
+			for(int j = 0; j<gm.getWidth(); j++)
+			{
+				if(revealed[i][j])
+				{
+					revealedPlaces += "t";
+				}
+				else
+				{
+					revealedPlaces += "f";
+				}
+			}
+		}
+		String flaggedPlaces = "";
+		for(int i = 0; i<gm.getHeight(); i++)
+		{
+			for(int j = 0; j<gm.getWidth(); j++)
+			{
+				if(flagged[i][j])
+				{
+					flaggedPlaces += "t";
+					mines--;
+				}
+				else
+				{
+					flaggedPlaces += "f";
+				}
+			}
+		}
+		String outputFileName = JOptionPane.showInputDialog("Name the save file. (If you want to save it somewhere besides the folder where this game is stored, then type in the filepath.)");
+		if(outputFileName.indexOf(".txt")!=outputFileName.length()-3)
+		{
+			outputFileName = outputFileName + ".txt";
+		}
+		try
+		{
+			FileWriter fileWriter = new FileWriter(outputFileName);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.write(difficulty);
+			bufferedWriter.newLine();
+			bufferedWriter.write("" + gm.getMinesLeft());
+			bufferedWriter.newLine();
+			bufferedWriter.write(boardPlaces);
+			bufferedWriter.newLine();
+			bufferedWriter.write(revealedPlaces);
+			bufferedWriter.newLine();
+			bufferedWriter.write(flaggedPlaces);
+			bufferedWriter.close();
+			fileWriter.close();
+		}
+		catch(IOException ex)
+		{
+			System.out.println("Could not write to " + outputFileName + ".txt");
+		}
+	}
+	public void load()
+	{
+		try
+		{
+			String inputFileName = JOptionPane.showInputDialog("What is the name of the file do you want to load?");
+			FileReader fileReader = new FileReader(inputFileName);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line = bufferedReader.readLine();
+			gm.setDifficulty(line);
+			line = bufferedReader.readLine();
+			gm.setMineNum(Integer.parseInt(line));
+			int index = 0;
+			line = bufferedReader.readLine();
+			for(int i = 0; i<gm.getHeight();i++)
+			{
+				for(int j = 0; j<gm.getWidth();j++)
+				{
+					board[i][j] = Integer.parseInt(line.substring(index, index+1));
+					index++;
+				}
+			}
+			line = bufferedReader.readLine();
+			index = 0;
+			for(int i = 0; i<gm.getHeight();i++)
+			{
+				for(int j = 0; j<gm.getWidth();j++)
+				{
+					if(line.substring(index,index+1).equals("t"))
+					{
+						revealed[i][j]=true;
+					}
+					else
+					{
+						revealed[i][j]=false;
+					}
+					index++;
+				}
+			}
+			line = bufferedReader.readLine();
+			index = 0;
+			for(int i = 0; i<gm.getHeight();i++)
+			{
+				for(int j = 0; j<gm.getWidth();j++)
+				{
+					if(line.substring(index,index+1).equals("t"))
+					{
+						flagged[i][j]=true;
+					}
+					else
+					{
+						flagged[i][j]=false;
+					}
+					index++;
+				}
+			}
+			repaint();
+		}
+		catch(FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "File not found.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		catch(IOException e)
+		{
+			JOptionPane.showMessageDialog(null, "This is not a Minesweeper File.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	public void quit()
+	{
+		System.exit(0);
 	}
 }

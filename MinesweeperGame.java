@@ -1,42 +1,16 @@
 public class MinesweeperGame
 {
-	public int[][] board;
-	public boolean[][] revealed;
-	public boolean[][] flagged;
-	public int minesLeft;
-	public String[] messages;
-	public int height;
-	public int width;
+	private int[][] board;
+	private boolean[][] revealed;
+	private boolean[][] flagged;
+	private int minesLeft;
+	public String winMessage;
+	public String lossMessage;
+	private int height;
+	private int width;
 	public String difficulty;
+	private int mines;
 	
-	/*public static void main(String[] args)
-	{
-		MinesweeperGame test = new MinesweeperGame();
-		printBoard(test.board);
-		printTF(test.revealed);
-		printTF(test.flagged);
-	}
-	/*public MinesweeperGame()
-	{
-		board = constructBoard();
-		revealed = new boolean[16][30];
-		flagged = new boolean[16][30];
-		messages = new String[5];
-		messages[0] = "Congrats, you didn't blow up your foot this time!";
-		messages[1] = "Good thing you made it this time, that wasn't a simulation.";
-		messages[2] = "Would you like some ice for that third-degree burn?";
-		messages[3] = "How does it feel to get a free amputation?";
-		messages[4] = "That looks like it hurts, just walk it off... Oh, sorry.";
-		for(int i = 0; i<16; i++)
-		{
-			for(int j = 0; j<30; j++)
-			{
-				revealed[i][j]=false;
-				flagged[i][j]=false;
-			}
-		}
-		minesLeft = 99;
-	}*/
 	public MinesweeperGame(String difficultyChoice)
 	{
 		difficulty = difficultyChoice;
@@ -45,28 +19,26 @@ public class MinesweeperGame
 			height = 8;
 			width = 8;
 			minesLeft = 10;
+			mines = 10;
 		}
 		else if(difficulty.equals("Intermediate"))
 		{
 			height = 16;
 			width = 16;
 			minesLeft = 40;
+			mines = 40;
 		}
 		else if(difficulty.equals("Expert"))
 		{
 			height = 16;
 			width = 30;
 			minesLeft = 99;
+			mines = 99;
 		}
-		System.out.println(difficulty+", "+height+", "+width);
 		revealed = new boolean[height][width];
 		flagged = new boolean[height][width];
-		messages = new String[5];
-		messages[0] = "Congrats, you didn't blow up your foot this time!";
-		messages[1] = "Good thing you made it this time, that wasn't a simulation.";
-		messages[2] = "Would you like some ice for that third-degree burn?";
-		messages[3] = "How does it feel to get a free amputation?";
-		messages[4] = "That looks like it hurts, just walk it off... Oh, sorry.";
+		winMessage = "Congratulation, you win!";
+		lossMessage = "Better luck next time.";
 		for(int i = 0; i<height; i++)
 		{
 			for(int j = 0; j<width; j++)
@@ -75,6 +47,11 @@ public class MinesweeperGame
 				flagged[i][j]=false;
 			}
 		}
+		board = constructBoard();
+	}
+	public String getDifficulty()
+	{
+		return difficulty;
 	}
 	public int[][] getBoard()
 	{
@@ -91,6 +68,10 @@ public class MinesweeperGame
 	public int getMinesLeft()
 	{
 		return minesLeft;
+	}
+	public int getMines()
+	{
+		return mines;
 	}
 	public int[][] constructBoard()
 	{
@@ -119,9 +100,13 @@ public class MinesweeperGame
 	{
 		return width;
 	}
-	public String[] getMessages()
+	public String getWinMessage()
 	{
-		return messages;
+		return winMessage;
+	}
+	public String getLossMessage()
+	{
+		return lossMessage;
 	}
 	public void boardValues(int[][] temp)
 	{
@@ -171,36 +156,39 @@ public class MinesweeperGame
 	{
 		minesLeft+=mineNum;
 	}
-	//Below method only for testing purposes.
-	public void printBoard()
+	public void setMineNum(int mines)
 	{
-		for(int i = 0; i<height; i++)
+		minesLeft = mines;
+	}
+	public void setDifficulty(String setting)
+	{
+		difficulty = setting;
+		if(difficulty.equals("Beginner"))
 		{
-			System.out.print("{ ");
-			for(int j = 0; j<width; j++)
-			{
-				System.out.print(board[i][j] + " ");
-			}
-			System.out.print("}\n");
+			height = 8;
+			width = 8;
+		}
+		else if(difficulty.equals("Intermediate"))
+		{
+			height = 16;
+			width = 16;
+		}
+		else if(difficulty.equals("Expert"))
+		{
+			height = 16;
+			width = 30;
 		}
 	}
-	public void printTF(boolean[][] tF)
+	public void setBoard(int[][] array)
 	{
-		for(int i = 0; i<height; i++)
-		{
-			System.out.print("{ ");
-			for(int j = 0; j<width; j++)
-			{
-				if(tF[i][j])
-				{
-					System.out.print("t ");
-				}
-				else
-				{
-					System.out.print("f ");
-				}
-			}
-			System.out.print("}\n");
-		}
+		board = array;
+	}
+	public void setFlagged(boolean[][] array)
+	{
+		flagged = array;
+	}
+	public void setRevealed(boolean[][] array)
+	{
+		revealed = array;
 	}
 }
