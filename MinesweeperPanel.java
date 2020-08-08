@@ -1,12 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 
 public class MinesweeperPanel extends JPanel
 {
-	private String[] possibleValues = {"Beginner", "Intermediate", "Expert"};
+	private String[] possibleValues = { "Beginner", "Intermediate", "Expert" };
 	private Object choice = JOptionPane.showInputDialog(null, "Choose the Dificulty", "Input", JOptionPane.INFORMATION_MESSAGE,  null, possibleValues, possibleValues[0]);
 	private String difficultyChoice = (""+choice);
 	private MinesweeperGame gm = new MinesweeperGame(difficultyChoice);
@@ -28,7 +26,7 @@ public class MinesweeperPanel extends JPanel
 		revealed = gm.getRevealed();
 		flagged = gm.getFlagged();
 		g.setColor(new Color(0,0,0));
-		int minesLeft = gm.getMinesLeft();
+		minesLeft = gm.getMinesLeft();
 		for(int i = 0; i<gm.getWidth(); i++)
 		{
 			for(int j = 0; j<gm.getHeight(); j++)
@@ -228,19 +226,6 @@ public class MinesweeperPanel extends JPanel
 	public void save()
 	{
 		String boardPlaces = "";
-		int mines = 0;
-		if(gm.getDifficulty().equals("Beginner"))
-		{
-			mines = 10;
-		}
-		else if(gm.getDifficulty().equals("Intermediate"))
-		{
-			mines = 40;
-		}
-		else if(gm.getDifficulty().equals("Expert"))
-		{
-			mines = 99;
-		}
 		for(int i = 0; i<gm.getHeight(); i++)
 		{
 			for(int j = 0; j<gm.getWidth(); j++)
@@ -271,7 +256,6 @@ public class MinesweeperPanel extends JPanel
 				if(flagged[i][j])
 				{
 					flaggedPlaces += "t";
-					mines--;
 				}
 				else
 				{
@@ -360,6 +344,7 @@ public class MinesweeperPanel extends JPanel
 					index++;
 				}
 			}
+			bufferedReader.close();
 			repaint();
 		}
 		catch(FileNotFoundException e)

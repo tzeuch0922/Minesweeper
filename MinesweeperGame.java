@@ -35,6 +35,10 @@ public class MinesweeperGame
 			minesLeft = 99;
 			mines = 99;
 		}
+		else
+		{
+			System.exit(0);
+		}
 		revealed = new boolean[height][width];
 		flagged = new boolean[height][width];
 		winMessage = "Congratulation, you win!";

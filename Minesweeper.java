@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.event.*;
 
 public class Minesweeper extends JFrame
@@ -11,18 +10,18 @@ public class Minesweeper extends JFrame
 	private JMenuItem save = new JMenuItem("Save");
 	private JMenuItem load = new JMenuItem("Load");
 	private JMenuItem quit = new JMenuItem("Quit");
-	private Minesweeper test;
+	private static Minesweeper test;
 	private MinesweeperPanel panel;
 	
 	public static void main(String[] args)
 	{
-		Minesweeper test = new Minesweeper();
+		test = new Minesweeper();
 	}
 	public Minesweeper()
 	{
 		panel = new MinesweeperPanel();
 		setTitle("Minesweeper");
-		setSize(new Dimension(30*panel.getWidthVariable()+7,30*panel.getHeightVariable()+159));
+		setSize(new Dimension(30*panel.getWidthVariable()+16,30*panel.getHeightVariable()+159));
 		setResizable(false);
 		panel.addMouseListener(new MouseAdapter()
 		{
